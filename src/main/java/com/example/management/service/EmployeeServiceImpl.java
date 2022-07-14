@@ -4,6 +4,7 @@ import com.example.management.Application;
 import com.example.management.dtos.requests.EmployeeAddRequestDTO;
 import com.example.management.dtos.requests.EmployeeUpdateRequestDTO;
 import com.example.management.dtos.responses.EmployeesReadResponseDTO;
+import com.example.management.enums.Domain;
 import com.example.management.enums.EmployeeExceptionEnum;
 import com.example.management.exception.EmployeeException;
 import com.example.management.model.Employee;
@@ -66,6 +67,17 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Override
     public String saveEmployee(EmployeeAddRequestDTO employeeAddRequestDTO) {
+        boolean validDomain = false;
+        for(Domain domain : Domain.values()){
+            if(employeeAddRequestDTO.getDomain().equalsIgnoreCase(domain.value)){
+                 validDomain = true;
+                 break;
+            }
+        }
+        if(!validDomain){
+            logger.error("Domain not valid");
+            throw new EmployeeException(EmployeeExceptionEnum.DOMAIN_NOT_VALID);
+        }
         Employee employee = new Employee();
         //employee.setId(employeeAddRequestDTO.getId());
         employee.setName(employeeAddRequestDTO.getName());

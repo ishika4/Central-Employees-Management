@@ -8,6 +8,7 @@ com/example/management/service/EmployeeService.class
 com/example/management/controller/EmployeeController.class
 com/example/management/service/EmployeeServiceImpl.class
 com/example/management/Application.class
+com/example/management/enums/Domain.class
 com/example/management/exception/EmployeeException.class
 com/example/management/dtos/requests/EmployeeUpdateRequestDTO.class
 com/example/management/model/Employee.class

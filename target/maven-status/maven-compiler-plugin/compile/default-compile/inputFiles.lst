@@ -1,5 +1,6 @@
 /Users/ishika.goel/Downloads/Central-Management/src/main/java/com/example/management/exception/EmployeeException.java
 /Users/ishika.goel/Downloads/Central-Management/src/main/java/com/example/management/service/EmployeeServiceImpl.java
+/Users/ishika.goel/Downloads/Central-Management/src/main/java/com/example/management/enums/Domain.java
 /Users/ishika.goel/Downloads/Central-Management/src/main/java/com/example/management/Application.java
 /Users/ishika.goel/Downloads/Central-Management/src/main/java/com/example/management/dtos/requests/EmployeeAddRequestDTO.java
 /Users/ishika.goel/Downloads/Central-Management/src/main/java/com/example/management/dtos/responses/EmployeesReadResponseDTO.java
