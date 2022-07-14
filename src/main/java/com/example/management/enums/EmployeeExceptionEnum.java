@@ -2,7 +2,8 @@ package com.example.management.enums;
 
 public enum EmployeeExceptionEnum {
 
-    USER_NOT_FOUND("601","User not found ");
+    EMPLOYEE_NOT_FOUND("601","Employee not found "),
+    RECORD_NOT_FOUND("602","Employees record not found");
 
     private final String errorCode;
     private final String description;

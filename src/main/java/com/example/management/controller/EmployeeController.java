@@ -7,6 +7,8 @@ import com.example.management.dtos.responses.EmployeesReadResponseDTO;
 import com.example.management.exception.EmployeeException;
 import com.example.management.model.Employee;
 import com.example.management.service.EmployeeService;
+//import org.apache.log4j.MDC;
+import org.jboss.logging.MDC;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,37 +32,41 @@ public class EmployeeController {
         return "Application server is up!";
     }
 
-    //@RequestMapping(value = "/employees", method = RequestMethod.GET)
     @GetMapping
     @ResponseBody
-    public ResponseEntity<List<EmployeeAddRequestDTO>> getEmployees(@RequestParam (defaultValue = "0") @Min(value = 0,message = "Page Number must be greater than or equal to 0") Integer pageNumber, @RequestParam @Min(value = 1,message = "Page Size must be greater than or equal to 1") Integer pageSize) throws EmployeeException {
-            return new ResponseEntity<>(employeeService.getEmployees(pageNumber, pageSize), HttpStatus.OK);
+    public ResponseEntity<List<EmployeeAddRequestDTO>> getEmployees(@RequestParam (defaultValue = "0") @Min(value = 0,message = "Page Number must be greater than or equal to 0") Integer pageNumber, @RequestParam (defaultValue = "0") @Min(value = 1,message = "Page Size must be greater than or equal to 1") Integer pageSize) throws EmployeeException {
+        MDC.put("request_id", "128");
+        return new ResponseEntity<>(employeeService.getEmployees(pageNumber, pageSize), HttpStatus.OK);
 
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EmployeeAddRequestDTO> getEmployee(@PathVariable("id") @Min(value = 0, message = "Employee id should be positive") @Valid Long id) throws EmployeeException {
+    public ResponseEntity<EmployeeAddRequestDTO> getEmployee(@PathVariable(name = "id",required = true) @Min(value = 0, message = "Employee id should be positive") @Valid Long id) throws EmployeeException {
         return new ResponseEntity<>(employeeService.getSingleEmployee(id),HttpStatus.OK);
     }
 
     @PostMapping
     public ResponseEntity<String> saveEmployee(@RequestBody @Valid EmployeeAddRequestDTO employeeAddRequestDTO){
-        return new ResponseEntity<>(employeeService.saveEmployee(employeeAddRequestDTO), HttpStatus.CREATED);
+        if(employeeAddRequestDTO != null)
+            return new ResponseEntity<>(employeeService.saveEmployee(employeeAddRequestDTO), HttpStatus.CREATED);
+        else
+            return new ResponseEntity<>("Please provide valid employee details",HttpStatus.NOT_ACCEPTABLE);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<String> updateEmployee(@PathVariable Long id, @RequestBody EmployeeUpdateRequestDTO employeeUpdateRequestDTO) throws EmployeeException {
+    public ResponseEntity<String> updateEmployee(@PathVariable (name = "id",required = true) Long id, @RequestBody @Valid EmployeeUpdateRequestDTO employeeUpdateRequestDTO) throws EmployeeException {
+
         return new ResponseEntity<>(employeeService.updateEmployee(id,employeeUpdateRequestDTO), HttpStatus.OK);
     }
 
     @DeleteMapping
-    public ResponseEntity<String> deleteEmployees(@RequestParam Long id){
+    public ResponseEntity<String> deleteEmployees(@RequestParam (name = "id",required = true) Long id){
         employeeService.deleteEmployee((id));
         return new ResponseEntity<>("Employee deleted successfully",HttpStatus.OK);
     }
 
     @GetMapping("/filterByName")
-    public ResponseEntity<List<Employee>> getEmployeesByName(@RequestParam String name){
+    public ResponseEntity<List<Employee>> getEmployeesByName(@RequestParam (name = "name",required = true) String name){
         return new ResponseEntity<>(employeeService.getEmployeesByName(name), HttpStatus.OK);
     }
 

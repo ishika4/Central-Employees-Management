@@ -1,5 +1,6 @@
 package com.example.management.service;
 
+import com.example.management.Application;
 import com.example.management.dtos.requests.EmployeeAddRequestDTO;
 import com.example.management.dtos.requests.EmployeeUpdateRequestDTO;
 import com.example.management.dtos.responses.EmployeesReadResponseDTO;
@@ -7,6 +8,9 @@ import com.example.management.enums.EmployeeExceptionEnum;
 import com.example.management.exception.EmployeeException;
 import com.example.management.model.Employee;
 import com.example.management.repository.EmployeeRepository;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -18,9 +22,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+
 @Service
 public class EmployeeServiceImpl implements EmployeeService{
 
+    private static final Logger logger = LogManager.getLogger(EmployeeServiceImpl.class);
     @Autowired
     private EmployeeRepository employeeRepository;
 
@@ -29,8 +35,10 @@ public class EmployeeServiceImpl implements EmployeeService{
         // can sort for multiple columns too
         Pageable pages = PageRequest.of(pageNumber, pageSize, Sort.Direction.ASC, "id", "domain");
         List<Employee> employees = employeeRepository.findAll(pages).getContent();
-        if(employees.isEmpty())
-            throw new EmployeeException(EmployeeExceptionEnum.USER_NOT_FOUND);
+        if(employees.isEmpty()) {
+            logger.error("Employees record is empty");
+            throw new EmployeeException(EmployeeExceptionEnum.RECORD_NOT_FOUND);
+        }
 
         EmployeesReadResponseDTO employeesReadResponseDTO = new EmployeesReadResponseDTO();
 
@@ -51,6 +59,8 @@ public class EmployeeServiceImpl implements EmployeeService{
         }
 
         employeesReadResponseDTO.setEmployees(list);
+        logger.info("Employees details fetched successfully");
+        //logger.log(Level.getLevel(SUCCESS),"Employees details fetched successfully");
         return employeesReadResponseDTO.getEmployees();
     }
 
@@ -68,6 +78,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 
         Employee savedEmployee = employeeRepository.save(employee);
 
+        logger.info("Employee added successfully");
         return "Employee Added Successfully";
     }
 
@@ -88,9 +99,11 @@ public class EmployeeServiceImpl implements EmployeeService{
                 employeeAddRequestDTO.setIsActive(employee.getIsActive());
             }
         else {
-            throw new EmployeeException(EmployeeExceptionEnum.USER_NOT_FOUND);
+            logger.error("No employee found!");
+            throw new EmployeeException(EmployeeExceptionEnum.EMPLOYEE_NOT_FOUND);
         }
 
+        logger.info("Employee details fetched successfully");
         return employeeAddRequestDTO;
     }
 
@@ -100,8 +113,10 @@ public class EmployeeServiceImpl implements EmployeeService{
         Integer isActive = 0;
         if(employee.isPresent())
             employeeRepository.softDeleteEmployeeByID(isActive, id);
-        else
-            throw new EmployeeException(EmployeeExceptionEnum.USER_NOT_FOUND);
+        else {
+            logger.error("No employee found!");
+            throw new EmployeeException(EmployeeExceptionEnum.EMPLOYEE_NOT_FOUND);
+        }
     }
 
     @Override
@@ -117,7 +132,8 @@ public class EmployeeServiceImpl implements EmployeeService{
             employee.setSalary(employeeUpdateRequestDTO.getSalary());
         }
         else {
-            throw new EmployeeException(EmployeeExceptionEnum.USER_NOT_FOUND);
+            logger.error("No employee found!");
+            throw new EmployeeException(EmployeeExceptionEnum.EMPLOYEE_NOT_FOUND);
         }
         employeeRepository.save(employee);
         return "Employee Updated Successfully";
