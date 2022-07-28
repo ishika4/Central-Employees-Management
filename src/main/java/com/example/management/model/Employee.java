@@ -11,7 +11,9 @@ import org.hibernate.validator.constraints.Email;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.Date;
 
 @Getter
@@ -26,23 +28,19 @@ public class Employee {
 
     private Long id;
 
-    @NotBlank(message = "Name should not be null")
     private String name;
-
 
     private Long age = 0L;
 
-
     private String location;
 
-    @Email(message = "Please enter a valid email address")
     private String email;
-
 
     private Long salary;
 
-    @NotBlank(message = "Domain should not be null")
     private String domain;
+
+    private Integer isActive;
 
     @CreationTimestamp
     @Column(name = "createdAt", nullable = false, updatable = false )

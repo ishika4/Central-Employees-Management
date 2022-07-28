@@ -28,4 +28,9 @@ public interface EmployeeRepository extends PagingAndSortingRepository<Employee,
     @Modifying
     @Query("DELETE FROM Employee WHERE name= :name")
     Integer deleteEmployeeByName(String name);
+
+    @Transactional
+    @Modifying
+    @Query("UPDATE Employee SET isActive= :isActive WHERE id= :id")
+    Integer softDeleteEmployeeByID(Integer isActive, Long id);
 }
